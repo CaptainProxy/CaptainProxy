@@ -197,10 +197,13 @@ if __name__ == '__main__':
         print '''Your computer's IP address is %s''' % ipaddr
         gw = raw_input('''Enter the IP address of the default gateway: (typically 192.168.0.1 or 192.168.1.1: ''')
         subnet = raw_input('''Enter your local subnet in CIDR notation (typically 192.168.0.0/8 or 192.168.1.0/8): ''')
-        print '''Run the following three commands on your Linux-based router'''
-        print '''iptables -t nat -A PREROUTING -i br0 -s ! %s -p tcp -d 208.71.186.73 --dport 80 -j DNAT --to %s:80''' % (ipaddr, ipaddr)
-        print '''iptables -t nat -A POSTROUTING -o br0 -s %s -d %s -j SNAT --to %s''' % (subnet, ipaddr, gw)
-        print '''iptables -A FORWARD -s %s -d %s -i br0 -o eth0 -p tcp --dport 80 -j ACCEPT''' % (subnet, ipaddr)
+        print '''Next, SSH into your router and run ifconfig to enumerate its networking interfaces. Then, answer the following questions.'''
+        phone_if = raw_input('''Enter the name of the wifi interface on the router that your phone is connected to (i.e. wlan0, br0): ''')
+        computer_if = raw_input('''Enter the name of the interface on the router that your computer is connected to (i.e. eth0, eth1, wlan0, br0): ''')
+        print '''Run the following three commands on your router'''
+        print '''iptables -t nat -A PREROUTING -i %s -s ! %s -p tcp -d 208.71.186.73 --dport 80 -j DNAT --to %s:80''' % (phone_if, ipaddr, ipaddr)
+        print '''iptables -t nat -A POSTROUTING -o %s -s %s -d %s -j SNAT --to %s''' % (phone_if, subnet, ipaddr, gw)
+        print '''iptables -A FORWARD -s %s -d %s -i %s -o %s -p tcp --dport 80 -j ACCEPT''' % (subnet, ipaddr, phone_if, computer_if)
 
         print "Any clients will be served..."
         ProxyHandler.protocol_version = 'HTTP/1.0'
