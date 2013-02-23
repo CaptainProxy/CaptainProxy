@@ -43,7 +43,7 @@ def main():
     print '''iptables -t nat -A POSTROUTING -o %s -s %s -d %s -j SNAT --to %s''' % (phone_if, subnet, ipaddr, gw)
     print '''iptables -A FORWARD -s %s -d %s -i %s -o %s -p tcp --dport 443 -j ACCEPT''' % (subnet, ipaddr, phone_if, computer_if)
 
-    httpd = BaseHTTPServer.HTTPServer(('192.168.0.4', 443), DummyHandler)
+    httpd = BaseHTTPServer.HTTPServer((ipaddr, 443), DummyHandler)
     httpd.socket = ssl.wrap_socket(httpd.socket, certfile='derpselfsignedcacert.pem', keyfile='selfsignedprivkey.pem', server_side=True)
     print '''The server is now running'''
     print
