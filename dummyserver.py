@@ -29,9 +29,10 @@ class DummyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.connection.close()
 
 def main():
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.connect(('iap.gameloft.com', 0))
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect(('iap.gameloft.com', 80))
     ipaddr = sock.getsockname()[0]
+    sock.close()
     print '''Your computer's IP address is %s''' % ipaddr
     gw = raw_input('''Enter the IP address of the default gateway: (typically 192.168.0.1 or 192.168.1.1: ''')
     subnet = raw_input('''Enter your local subnet in CIDR notation (typically 192.168.0.0/8 or 192.168.1.0/8): ''')
